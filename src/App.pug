@@ -2,7 +2,7 @@ script.
     // App.pug
     import TestComponent from "./TestComponent.pug"
     
-    let views = ["view1", "view2", "view3"]
+    let views = ["home", "learn"]
     var currentView = views[0]
 
     const setView = (viewId) => currentView = viewId
@@ -25,32 +25,26 @@ main
                     span.icon-bar
                 a(
                     class="navbar-brand"
-                ) StaPaWiSaSaPu
+                ) Free Langer
                     small v0.1
 
             #navbar.collapse.navbar-collapse
                 ul.nav.navbar-nav
-                    li( class="{ currentView == 'view1' ? 'active' : ''}")
-                        a(href="#" "on:click|preventDefault"="{ setView.bind(this,'view1') }") Wiew #1 
+                    li( class="{ currentView == views[0] ? 'active' : ''}")
+                        a(href="#" "on:click|preventDefault"="{ setView.bind(this,views[0]) }") Home
 
-                    li( class="{ currentView == 'view2' ? 'active' : ''}")
-                        a(href="#" "on:click|preventDefault"="{ setView.bind(this,'view2') }") View #2
-                    
-                    li( class="{ currentView == 'view3' ? 'active' : ''}")
-                        a(href="#" "on:click|preventDefault"="{ setView.bind(this,'view3') }") View #3
+                    li( class="{ currentView == 'views[1]' ? 'active' : ''}")
+                        a(href="#" "on:click|preventDefault"="{ setView.bind(this,views[1]) }") Learn
 
     .container
         .starter-template
-            div(class="view-{currentView != 'view1' ? 'hidden' : 'block'}")
-                h1 View #1
+            div(class="view-{currentView != views[0] ? 'hidden' : 'block'}")
+                h1 Home
 
                 TestComponent
 
-            div(class="view-{currentView != 'view2' ? 'hidden' : 'block'}")
-                h1 View #2
-
-            div(class="view-{currentView != 'view3' ? 'hidden' : 'block'}")
-                h1 View #3
+            div(class="view-{currentView != views[1] ? 'hidden' : 'block'}")
+                h1 Learn
 
     footer.footer Made with &#9829; and :)s
 style.

@@ -1,5 +1,3 @@
-# StaPaWiSaSaPu
+# FREE Langer
 
-### STArter PAck WIth Svelte And Sass And PUg
-
-Just a default starter pack for projects
+Because learning languages should be free.
