@@ -1,66 +1,35 @@
 script.
     // App.pug
     import TestComponent from "./TestComponent.pug"
-    
-    let views = ["home", "learn"]
-    var currentView = views[0]
+    import LearnComponent from "./LearnComponent.pug"
+    import NavigationComponent from "./NavigationComponent.pug"
+    import HomeComponent from "./HomeComponent.pug"
 
-    const setView = (viewId) => currentView = viewId
+    import {Util} from "./Util.js"
+    import router from "page"
+
+    // routes 
+    let page
+    let params
+
+    router('/', () => page = HomeComponent)
+    router("/learn", () => page = LearnComponent)
+    
+    router.start()
 
 main
-    nav.navbar.navbar-inverse.navbar-fixed-top
-        .container
-            .navbar-header
-                button(
-                    type="button"
-                    class="navbar-toggle collapsed"
-                    data-toggle="collapse"
-                    data-target="#navbar"
-                    aria-expanded="false"
-                    aria-controls="navbar"
-                )
-                    span.sr-only Toggle Navigation
-                    span.icon-bar
-                    span.icon-bar
-                    span.icon-bar
-                a(
-                    class="navbar-brand"
-                ) Free Langer
-                    small v0.1
-
-            #navbar.collapse.navbar-collapse
-                ul.nav.navbar-nav
-                    li( class="{ currentView == views[0] ? 'active' : ''}")
-                        a(href="#" "on:click|preventDefault"="{ setView.bind(this,views[0]) }") Home
-
-                    li( class="{ currentView == 'views[1]' ? 'active' : ''}")
-                        a(href="#" "on:click|preventDefault"="{ setView.bind(this,views[1]) }") Learn
-
     .container
+        NavigationComponent
         .starter-template
-            div(class="view-{currentView != views[0] ? 'hidden' : 'block'}")
-                h1 Home
-
-                TestComponent
-
-            div(class="view-{currentView != views[1] ? 'hidden' : 'block'}")
-                h1 Learn
+            svelte:component(this={page})
+            
 
     footer.footer Made with &#9829; and :)s
 style.
-    .navbar-brand small {
-        font-size: 0.5em;
-        margin-left: 5px;
-    }
-
     footer.footer {
         position: fixed;
         left: 0;
         bottom: 0;
         width: 100%;
         text-align: center;
-    }
-
-    .view-hidden {
-        display: none;
     }

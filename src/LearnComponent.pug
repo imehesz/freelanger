@@ -1,0 +1,91 @@
+script.
+    // LearnComponent.pug
+    
+    import {onMount} from "svelte"
+    import {Util} from "./Util"
+
+    export let params 
+
+    let lang = Util.URLUtil.getParam("lang")
+    let show = Util.URLUtil.getParam("s")
+    
+    let text = "BLAH"
+
+    let sentences = [
+        "This is a test sentence for learning English. I'm no dummy!",
+        "this is just another trial sentence"
+    ]
+
+    let selSentence = sentences[0]
+
+    let selSentenceArr = selSentence.split(" ")
+
+    let maxHidden = 3
+    let hiddenArr = []
+    let choiceArr = []
+    let words = []
+
+    const cleanWord = (str) => str.replace(/[^a-zA-Z,']+/, "").toLowerCase()
+
+    for(let i=0; i<sentences.length; i++) {
+        let s = sentences[i] 
+        let tmpWords = s.split(" ").map(el => cleanWord(el).toLowerCase())
+
+        words = Array.from(new Set(words.concat(tmpWords))) 
+    }
+
+    console.log("words", words)
+
+    while(hiddenArr.length != maxHidden) {
+        let idx = Math.floor(Math.random() * selSentenceArr.length); 
+        hiddenArr.push(idx)
+
+        hiddenArr = Array.from(new Set(hiddenArr))
+    }
+
+    hiddenArr.map(elIdx => choiceArr.push(cleanWord(selSentenceArr[elIdx])))
+
+    while(choiceArr.length != maxHidden*2) {
+        choiceArr.push(cleanWord(words[Math.floor(Math.random() * words.length)]))
+        choiceArr = Array.from(new Set(choiceArr))
+    }
+
+    console.log(Util.ArrayUtil.shuffle(choiceArr))
+
+
+section.learn-component
+    h1 Learn {lang} from {show}.
+
+    section.sentence
+      {#each selSentenceArr as word, i}
+        {#if hiddenArr.indexOf(i) == -1}
+          span {word}
+        {:else}
+          span.blank ...
+    hr
+    section.choices
+      {#each choiceArr as word, i}
+        span {word}
+
+style.
+    .sentence, .choices {
+        display: flex;
+        gap: 10px;
+        font-size: 4vw;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .sentence span.blank,
+    .choices span{
+        min-width: 75px;
+        text-align: center;
+        background-color: lightgray;
+        border: 1px solid darkgray;
+        border-radius: 4px;
+        padding: 0 5px;
+    }
+
+    .choices span {
+        background-color: #fff9c4;
+    }
