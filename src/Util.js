@@ -41,5 +41,12 @@ export const Util = {
 
     StoreUtil: {
         setMainWord: word => $mainWord = word
+    },
+
+    URLUtil: {
+        getParam: param => {
+            let url = new URL(window.location.href)
+            return url.searchParams.get(param)
+        }
     }
 }

@@ -4,12 +4,38 @@ script.
     import {onMount} from "svelte"
     import {Util} from "./Util"
 
-    export let params 
-
     let lang = Util.URLUtil.getParam("lang")
-    let show = Util.URLUtil.getParam("s")
+    let showId = Util.URLUtil.getParam("showId")
     
     let text = "BLAH"
+
+    let languages = [
+        {
+            id: "eng",
+            label: "English",
+            flagImg: ""
+        },
+
+        {
+            id: "esp",
+            label: "Spanish",
+            flagImg: ""
+        }
+    ]
+
+    let shows = [
+        {
+            id: "better-call-saul",
+            langId: "esp",
+            label: "Better Call Saul"
+        },
+
+        {
+            id: "emily-in-paris",
+            langId: "fr",
+            label: "Emily in Paris"
+        }
+    ]
 
     let sentences = [
         "This is a test sentence for learning English. I'm no dummy!",
@@ -26,6 +52,9 @@ script.
     let words = []
 
     const cleanWord = (str) => str.replace(/[^a-zA-Z,']+/, "").toLowerCase()
+
+    const lessonReady = () => lang && showId
+    const langReady = () => (!lessonReady()) || lang
 
     for(let i=0; i<sentences.length; i++) {
         let s = sentences[i] 
@@ -54,18 +83,33 @@ script.
 
 
 section.learn-component
-    h1 Learn {lang} from {show}.
+    h1 Learn {lang} from {showId}.
 
-    section.sentence
-      {#each selSentenceArr as word, i}
-        {#if hiddenArr.indexOf(i) == -1}
-          span {word}
-        {:else}
-          span.blank ...
-    hr
-    section.choices
-      {#each choiceArr as word, i}
-        span {word}
+    section( class="{lessonReady() ? 'hidden' : '' }")
+        section.languages(class="{ lang ? 'hidden' : '' }")
+            ul
+              {#each languages as language}
+                li 
+                    a(href="/learn?lang={language.id}" target="_self") {language.label}
+
+
+        section.languages(class="{ !lang ? 'hidden':''}")
+            ul
+              {#each shows as show}
+                li
+                    a(href="/learn?lang={lang}&showId={show.id}" target="_self") {show.label}
+
+    section.learn(class="{ lessonReady() ? 'active' : 'hidden' }")
+        section.sentence
+          {#each selSentenceArr as word, i}
+            {#if hiddenArr.indexOf(i) == -1}
+              span {word}
+            {:else}
+              span.blank ...
+        hr
+        section.choices
+          {#each choiceArr as word, i}
+            span {word}
 
 style.
     .sentence, .choices {

@@ -20,6 +20,7 @@ nav.navbar.navbar-inverse.navbar-fixed-top
                     span.icon-bar
                 a(
                     class="navbar-brand"
+                    href="/"
                 ) Free Langer
                     small v0.1
             #navbar.collapse.navbar-collapse
@@ -28,7 +29,7 @@ nav.navbar.navbar-inverse.navbar-fixed-top
                         a(href="/") Home
 
                     li( class="{ currentView == 'views[1]' ? 'active' : ''}")
-                        a(href="/learn") Learn
+                        a(href="/learn" target="_self") Learn
 
 style.
     .navbar-brand small {
