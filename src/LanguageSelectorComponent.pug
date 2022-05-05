@@ -1,0 +1,12 @@
+script.
+    // LanguageSelectorComponent.pug
+
+    export let languages = []
+
+section.language-selector
+    h1 LANGUAGES {languages.length}
+
+    ul
+      {#each languages as language}
+        li 
+            a(href="/learn?lang={language.id}" target="_self") {language.label}

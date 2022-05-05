@@ -1,0 +1,13 @@
+script.
+    // ShowSelectorComponent.pug
+
+    export let shows = []
+    export let selLang = ""
+
+section.shows-selector
+    h1 SHOWS {shows.length}
+
+    ul
+      {#each shows as show}
+        li
+            a(href="/learn?lang={selLang}&showId={show.id}" target="_self") {show.label}
