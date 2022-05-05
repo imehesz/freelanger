@@ -1,41 +1,14 @@
 script.
     // LearnComponent.pug
-    
-    import {onMount} from "svelte"
+    import LanguageSelectorComponent from "./LanguageSelectorComponent.pug"
+    import ShowSelectorComponent from "./ShowSelectorComponent.pug"
     import {Util} from "./Util"
-
-    let lang = Util.URLUtil.getParam("lang")
-    let showId = Util.URLUtil.getParam("showId")
     
-    let text = "BLAH"
+    let lang 
+    let showId
 
-    let languages = [
-        {
-            id: "eng",
-            label: "English",
-            flagImg: ""
-        },
-
-        {
-            id: "esp",
-            label: "Spanish",
-            flagImg: ""
-        }
-    ]
-
-    let shows = [
-        {
-            id: "better-call-saul",
-            langId: "esp",
-            label: "Better Call Saul"
-        },
-
-        {
-            id: "emily-in-paris",
-            langId: "fr",
-            label: "Emily in Paris"
-        }
-    ]
+    let languages = []
+    let shows = []
 
     let sentences = [
         "This is a test sentence for learning English. I'm no dummy!",
@@ -53,63 +26,71 @@ script.
 
     const cleanWord = (str) => str.replace(/[^a-zA-Z,']+/, "").toLowerCase()
 
-    const lessonReady = () => lang && showId
+    const lessonReady = () => !!(lang && showId)
     const langReady = () => (!lessonReady()) || lang
 
-    for(let i=0; i<sentences.length; i++) {
-        let s = sentences[i] 
-        let tmpWords = s.split(" ").map(el => cleanWord(el).toLowerCase())
+    const init = () => {
+        lang = Util.URLUtil.getParam("lang")
+        showId = Util.URLUtil.getParam("showId")
 
-        words = Array.from(new Set(words.concat(tmpWords))) 
+        Util.ServiceUtil.loadData("../data/languages.json", true).then(data => {
+            if(data && data.length) languages = data
+        })
+
+        Util.ServiceUtil.loadData("../data/shows.json", true).then(data => {
+            if(data && data.length) shows = data
+        })
+
+        for(let i=0; i<sentences.length; i++) {
+            let s = sentences[i] 
+            let tmpWords = s.split(" ").map(el => cleanWord(el).toLowerCase())
+
+            words = Array.from(new Set(words.concat(tmpWords))) 
+        }
+
+        console.log("words", words)
+
+        while(hiddenArr.length != maxHidden) {
+            let idx = Math.floor(Math.random() * selSentenceArr.length); 
+            hiddenArr.push(idx)
+
+            hiddenArr = Array.from(new Set(hiddenArr))
+        }
+
+        hiddenArr.map(elIdx => choiceArr.push(cleanWord(selSentenceArr[elIdx])))
+
+        while(choiceArr.length != maxHidden*2) {
+            choiceArr.push(cleanWord(words[Math.floor(Math.random() * words.length)]))
+            choiceArr = Array.from(new Set(choiceArr))
+        }
+
+        console.log("lesson ready", lessonReady())
     }
 
-    console.log("words", words)
-
-    while(hiddenArr.length != maxHidden) {
-        let idx = Math.floor(Math.random() * selSentenceArr.length); 
-        hiddenArr.push(idx)
-
-        hiddenArr = Array.from(new Set(hiddenArr))
-    }
-
-    hiddenArr.map(elIdx => choiceArr.push(cleanWord(selSentenceArr[elIdx])))
-
-    while(choiceArr.length != maxHidden*2) {
-        choiceArr.push(cleanWord(words[Math.floor(Math.random() * words.length)]))
-        choiceArr = Array.from(new Set(choiceArr))
-    }
-
-    console.log(Util.ArrayUtil.shuffle(choiceArr))
+    init()
 
 
 section.learn-component
     h1 Learn {lang} from {showId}.
 
-    section( class="{lessonReady() ? 'hidden' : '' }")
-        section.languages(class="{ lang ? 'hidden' : '' }")
-            ul
-              {#each languages as language}
-                li 
-                    a(href="/learn?lang={language.id}" target="_self") {language.label}
+    div( class="{lessonReady() ? 'hidden' : '' }")
+        {#if !lang }
+          LanguageSelectorComponent(languages="{languages}")
+        {#if lang }
+          ShowSelectorComponent(shows="{shows}" selLang="{lang}") {lang}
 
-
-        section.languages(class="{ !lang ? 'hidden':''}")
-            ul
-              {#each shows as show}
-                li
-                    a(href="/learn?lang={lang}&showId={show.id}" target="_self") {show.label}
-
-    section.learn(class="{ lessonReady() ? 'active' : 'hidden' }")
-        section.sentence
-          {#each selSentenceArr as word, i}
-            {#if hiddenArr.indexOf(i) == -1}
+    {#if lessonReady()}
+      section.learn(class="{ lessonReady() ? 'active' : 'hidden' }")
+          section.sentence
+            {#each selSentenceArr as word, i}
+              {#if hiddenArr.indexOf(i) == -1}
+                span {word}
+              {:else}
+                span.blank ...
+          hr
+          section.choices
+            {#each choiceArr as word, i}
               span {word}
-            {:else}
-              span.blank ...
-        hr
-        section.choices
-          {#each choiceArr as word, i}
-            span {word}
 
 style.
     .sentence, .choices {

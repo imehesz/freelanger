@@ -23,12 +23,24 @@ export const Util = {
     },
 
     ServiceUtil: {
-        loadData: async () => {
+        loadData: async (url, cacheIt) => {
+            let cacheStr = `MHX_APP.${MHX_APP.appId}.${MHX_APP.version}.${url.replace(/[^a-zA-Z0-9]/g,'_')}`
+            let data
+
+            if(cacheIt) {
+                data = sessionStorage.getItem(cacheStr)
+
+                if(data) return JSON.parse(data)
+            }
+
             try {
-                let response = await fetch(MHX.dataUrl)
+                let response = await fetch(url)
 
                 if(response.status == 200) {
                     let json = await response.json()
+
+                    if(cacheIt) sessionStorage.setItem(cacheStr, JSON.stringify(json))
+
                     return json
                 }
 
@@ -36,7 +48,9 @@ export const Util = {
             } catch(err) {
                 console.error(err) // TypeError: failed to fetch
             }
-        }
+        },
+
+
     },
 
     StoreUtil: {

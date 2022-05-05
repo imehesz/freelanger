@@ -12,6 +12,8 @@
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "cross-env": "^7.0.3",
+    "page": "^1.11.6",
+    "pagejs": "^1.0.0",
     "pug": "^2.0.4",
     "pug2svelte": "^0.0.2-alpha.9",
     "rollup": "^2.3.4",
